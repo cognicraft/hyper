@@ -1,19 +1,23 @@
 package hyper
 
+import (
+	"encoding/json"
+)
+
 // Item has properties, links, actions, (sub-)items and errors.
 type Item struct {
-	Label       string     `json:"label,omitempty"`
-	Description string     `json:"description,omitempty"`
-	Render      string     `json:"render,omitempty"`
-	Rel         string     `json:"rel,omitempty"`
-	ID          string     `json:"id,omitempty"`
-	Type        string     `json:"type,omitempty"`
-	Properties  Properties `json:"properties,omitempty"`
-	Data        Data       `json:"data,omitempty"`
-	Links       Links      `json:"links,omitempty"`
-	Actions     Actions    `json:"actions,omitempty"`
-	Items       Items      `json:"items,omitempty"`
-	Errors      Errors     `json:"errors,omitempty"`
+	Label       string          `json:"label,omitempty"`
+	Description string          `json:"description,omitempty"`
+	Render      string          `json:"render,omitempty"`
+	Rel         string          `json:"rel,omitempty"`
+	ID          string          `json:"id,omitempty"`
+	Type        string          `json:"type,omitempty"`
+	Properties  Properties      `json:"properties,omitempty"`
+	Data        json.RawMessage `json:"data,omitempty"`
+	Links       Links           `json:"links,omitempty"`
+	Actions     Actions         `json:"actions,omitempty"`
+	Items       Items           `json:"items,omitempty"`
+	Errors      Errors          `json:"errors,omitempty"`
 }
 
 // AddProperty add a Property to this Item
@@ -54,6 +58,19 @@ func (i *Item) AddAction(a Action) {
 // AddActions adds many Actions to this Item
 func (i *Item) AddActions(as Actions) {
 	i.Actions = append(i.Actions, as...)
+}
+
+func (i *Item) EncodeData(v interface{}) error {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	i.Data = json.RawMessage(data)
+	return nil
+}
+
+func (i *Item) DecodeData(v interface{}) error {
+	return json.Unmarshal(i.Data, v)
 }
 
 // Items represents a collection of Item

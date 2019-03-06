@@ -2,19 +2,18 @@ package hyper
 
 // Action .
 type Action struct {
-	Label        string     `json:"label,omitempty"`
-	Description  string     `json:"description,omitempty"`
-	Render       string     `json:"render,omitempty"`
-	Rel          string     `json:"rel"`
-	Href         string     `json:"href,omitempty"`
-	Encoding     string     `json:"encoding,omitempty"`
-	Method       string     `json:"method,omitempty"`
-	Template     string     `json:"template,omitempty"`
-	Parameters   Parameters `json:"parameters,omitempty"`
-	Context      string     `json:"context,omitempty"`
-	OK           string     `json:"ok,omitempty"`
-	Cancel       string     `json:"cancel,omitempty"`
-	Confirmation string     `json:"confirmation,omitempty"`
+	Label       string     `json:"label,omitempty"`
+	Description string     `json:"description,omitempty"`
+	Render      string     `json:"render,omitempty"`
+	Rel         string     `json:"rel"`
+	Href        string     `json:"href,omitempty"`
+	Encoding    string     `json:"encoding,omitempty"`
+	Method      string     `json:"method,omitempty"`
+	Template    string     `json:"template,omitempty"`
+	Parameters  Parameters `json:"parameters,omitempty"`
+	Context     string     `json:"context,omitempty"`
+	OK          string     `json:"ok,omitempty"`
+	Cancel      string     `json:"cancel,omitempty"`
 }
 
 // Actions .
