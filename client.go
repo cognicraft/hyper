@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
@@ -61,12 +62,18 @@ func (c *Client) FetchRaw(url string, opts ...func(*http.Request)) (http.Header,
 	return resp.Header, data, err
 }
 
-func (c *Client) Submit(a Action, args Arguments) (*http.Response, error) {
-	if args == nil {
-		args = Arguments{}
+func (c *Client) Submit(a Action, args Arguments, opts ...func(*http.Request)) (*http.Response, error) {
+	as := Arguments{}
+	for _, p := range a.Parameters {
+		if p.Type == TypeHidden {
+			as[p.Name] = p.Value
+		}
+	}
+	for k, v := range args {
+		as[k] = v
 	}
 	buf := bytes.Buffer{}
-	err := json.NewEncoder(&buf).Encode(args)
+	err := json.NewEncoder(&buf).Encode(as)
 	if err != nil {
 		return nil, err
 	}
@@ -75,5 +82,18 @@ func (c *Client) Submit(a Action, args Arguments) (*http.Response, error) {
 		return nil, err
 	}
 	req.Header.Set(HeaderContentType, a.Encoding)
+	for _, opt := range opts {
+		opt(req)
+	}
 	return c.httpClient.Do(req)
+}
+
+func (c *Client) SubmitDiscard(a Action, args Arguments, opts ...func(*http.Request)) error {
+	res, err := c.Submit(a, args, opts...)
+	if err != nil {
+		return err
+	}
+	io.Copy(ioutil.Discard, res.Body)
+	res.Body.Close()
+	return nil
 }
