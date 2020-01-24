@@ -63,4 +63,5 @@ const (
 	RelFirst    = "first"
 	RelSelf     = "self"
 	RelDetails  = "details"
+	RelSearch   = "search"
 )
