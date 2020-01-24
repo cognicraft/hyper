@@ -46,6 +46,13 @@ const (
 )
 
 const (
+	TypeSelect   = "select"
+	TypeDatalist = "datalist"
+	TypeInteger  = "integer"
+	TypeBool     = "bool"
+)
+
+const (
 	// RenderNone is used on links or items that should not be displayed in the UI
 	RenderNone = "none"
 	// RenderTransclude is used on links or items to signal that these should be embedded within the current view.
