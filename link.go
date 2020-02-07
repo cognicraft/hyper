@@ -55,3 +55,13 @@ func LinkRelEquals(rel string) func(Link) bool {
 		return rel == l.Rel
 	}
 }
+
+const (
+	RelNext     = "next"
+	RelPrevious = "previous"
+	RelLast     = "last"
+	RelFirst    = "first"
+	RelSelf     = "self"
+	RelDetails  = "details"
+	RelSearch   = "search"
+)
