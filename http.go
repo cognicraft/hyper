@@ -169,6 +169,8 @@ func (a Arguments) Bool(key string) bool {
 		return false
 	}
 	switch v := v.(type) {
+	case bool:
+		return v
 	case float64:
 		return v > 0
 	case string:
