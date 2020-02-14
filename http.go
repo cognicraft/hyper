@@ -72,8 +72,8 @@ const (
 func ExtractCommand(r *http.Request) Command {
 	c := MakeCommand()
 	ct := r.Header.Get(HeaderContentType)
-	switch ct {
-	case ContentTypeURLEncoded:
+	switch {
+	case ct == ContentTypeURLEncoded:
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			return c
@@ -94,7 +94,7 @@ func ExtractCommand(r *http.Request) Command {
 			}
 		}
 		return c
-	case ContentTypeMultipartFormData:
+	case strings.HasPrefix(ct, ContentTypeMultipartFormData):
 		err := r.ParseMultipartForm(defaultMaxMemory)
 		if err != nil {
 			return c
