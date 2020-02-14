@@ -2,6 +2,7 @@ package hyper
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -25,10 +26,11 @@ const (
 
 // HTTP content types
 const (
-	ContentTypeHyperItem     = "application/vnd.hyper-item+json"               // https://github.com/mdemuth/hyper-item
-	ContentTypeHyperItemUTF8 = "application/vnd.hyper-item+json;charset=UTF-8" // https://github.com/mdemuth/hyper-item
-	ContentTypeJSON          = "application/json"                              // https://tools.ietf.org/html/rfc8259
-	ContentTypeURLEncoded    = "application/x-www-form-urlencoded"             // http://www.w3.org/TR/html
+	ContentTypeHyperItem         = "application/vnd.hyper-item+json"               // https://github.com/mdemuth/hyper-item
+	ContentTypeHyperItemUTF8     = "application/vnd.hyper-item+json;charset=UTF-8" // https://github.com/mdemuth/hyper-item
+	ContentTypeJSON              = "application/json"                              // https://tools.ietf.org/html/rfc8259
+	ContentTypeURLEncoded        = "application/x-www-form-urlencoded"             // http://www.w3.org/TR/html
+	ContentTypeMultipartFormData = "multipart/form-data"                           // https://tools.ietf.org/html/rfc2388
 )
 
 // Write writes a hyper-item to the response writer with the given status code.
@@ -78,6 +80,23 @@ func ExtractCommand(r *http.Request) Command {
 		}
 		c.Action = values.Get(NameAction)
 		for n, vs := range values {
+			if n == NameAction {
+				continue
+			}
+			if len(vs) == 1 {
+				c.Arguments[n] = vs[0]
+			} else {
+				c.Arguments[n] = vs
+			}
+		}
+		return c
+	case ContentTypeMultipartFormData:
+		err := r.ParseMultipartForm(0)
+		if err != nil {
+			return c
+		}
+		c.Action = r.Form.Get(NameAction)
+		for n, vs := range r.Form {
 			if n == NameAction {
 				continue
 			}
@@ -178,6 +197,24 @@ func (a Arguments) Bool(key string) bool {
 		return b
 	default:
 		return false
+	}
+}
+
+func (a Arguments) Bytes(key string) []byte {
+	v, ok := a[key]
+	if !ok {
+		return nil
+	}
+	switch v := v.(type) {
+	case string:
+		reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(v))
+		bs, err := ioutil.ReadAll(reader)
+		if err != nil {
+			return nil
+		}
+		return bs
+	default:
+		return nil
 	}
 }
 
