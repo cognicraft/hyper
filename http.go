@@ -99,11 +99,17 @@ func ExtractCommand(r *http.Request) Command {
 		if err != nil {
 			return c
 		}
-		c.Action = r.Form.Get(NameAction)
-		for n, vs := range r.Form {
-			if n == NameAction {
-				continue
+		for n, vs := range r.MultipartForm.Value {
+			if n == NameAction && len(vs) > 0 {
+				c.Action = vs[0]
 			}
+			if len(vs) == 1 {
+				c.Arguments[n] = vs[0]
+			} else {
+				c.Arguments[n] = vs
+			}
+		}
+		for n, vs := range r.MultipartForm.File {
 			if len(vs) == 1 {
 				c.Arguments[n] = vs[0]
 			} else {
