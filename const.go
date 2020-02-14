@@ -43,6 +43,8 @@ const (
 	TypeURL = "url"
 	// TypeWeek is used for parameters of type week
 	TypeWeek = "week"
+	// TypeFile is used for parameters of type file
+	TypeFile = "file"
 )
 
 const (

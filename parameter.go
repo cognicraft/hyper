@@ -6,19 +6,21 @@ type Parameter struct {
 	Description string        `json:"description,omitempty"`
 	Name        string        `json:"name"`
 	Type        string        `json:"type"`
+	Accept      string        `json:"accept,omitempty"`
 	Value       interface{}   `json:"value,omitempty"`
-	Placeholder string        `json:"placeholder,omitempty"`
 	Options     SelectOptions `json:"options,omitempty"`
 	Related     string        `json:"related,omitempty"`
 	Components  interface{}   `json:"components,omitempty"`
-	Pattern     string        `json:"pattern,omitempty"`
-	Min         interface{}   `json:"min,omitempty"`
-	Max         interface{}   `json:"max,omitempty"`
-	MaxLength   interface{}   `json:"max-length,omitempty"`
-	Size        interface{}   `json:"size,omitempty"`
-	Step        interface{}   `json:"step,omitempty"`
-	Cols        interface{}   `json:"cols,omitempty"`
-	Rows        interface{}   `json:"rows,omitempty"`
+	Placeholder string        `json:"placeholder,omitempty"`
+	Pattern     string        `json:"pattern,omitempty"`    // pattern to be matched by the value
+	Min         interface{}   `json:"min,omitempty"`        // minimum value
+	MinLength   interface{}   `json:"min-length,omitempty"` // minimum length of value
+	Max         interface{}   `json:"max,omitempty"`        // maximum value
+	MaxLength   interface{}   `json:"max-length,omitempty"` // maximum length of value
+	Step        interface{}   `json:"step,omitempty"`       // granularity to be matched by the parameter's value
+	Rows        interface{}   `json:"rows,omitempty"`       // specifies the visible number of lines in a text area
+	Cols        interface{}   `json:"cols,omitempty"`       // specifies the visible width of a text area
+	Wrap        interface{}   `json:"wrap,omitempty"`       // specifies how the text in a text area is to be wrapped when submitted in a form
 	Required    bool          `json:"required,omitempty"`
 	ReadOnly    bool          `json:"read-only,omitempty"`
 	Multiple    bool          `json:"multiple,omitempty"`
