@@ -65,6 +65,10 @@ func ActionParameter(value string) Parameter {
 	}
 }
 
+const (
+	defaultMaxMemory = 32 << 20 // 32 MB
+)
+
 func ExtractCommand(r *http.Request) Command {
 	c := MakeCommand()
 	ct := r.Header.Get(HeaderContentType)
@@ -91,7 +95,7 @@ func ExtractCommand(r *http.Request) Command {
 		}
 		return c
 	case ContentTypeMultipartFormData:
-		err := r.ParseMultipartForm(0)
+		err := r.ParseMultipartForm(defaultMaxMemory)
 		if err != nil {
 			return c
 		}
