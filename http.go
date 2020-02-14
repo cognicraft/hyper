@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -219,6 +220,16 @@ func (a Arguments) Bytes(key string) []byte {
 	case string:
 		reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(v))
 		bs, err := ioutil.ReadAll(reader)
+		if err != nil {
+			return nil
+		}
+		return bs
+	case *multipart.FileHeader:
+		f, err := v.Open()
+		if err != nil {
+			return nil
+		}
+		bs, err := ioutil.ReadAll(f)
 		if err != nil {
 			return nil
 		}
