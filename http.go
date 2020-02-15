@@ -218,6 +218,16 @@ func (a Arguments) Bytes(key string) []byte {
 	}
 	switch v := v.(type) {
 	case string:
+		if strings.HasPrefix(v, "data:") {
+			if i := strings.Index(v, ","); i > 0 {
+				// drop prefix
+				uv, err := url.QueryUnescape(v[i+1:])
+				if err != nil {
+					return nil
+				}
+				v = uv
+			}
+		}
 		reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(v))
 		bs, err := ioutil.ReadAll(reader)
 		if err != nil {
