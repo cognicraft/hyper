@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
@@ -221,16 +222,17 @@ func (a Arguments) Bytes(key string) []byte {
 		if strings.HasPrefix(v, "data:") {
 			if i := strings.Index(v, ","); i > 0 {
 				// drop prefix
-				uv, err := url.QueryUnescape(v[i+1:])
+				uv, err := unescape(v[i+1:])
 				if err != nil {
 					return nil
 				}
-				v = uv
+				v = string(uv)
 			}
 		}
 		reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(v))
 		bs, err := ioutil.ReadAll(reader)
 		if err != nil {
+			fmt.Printf("%v", err)
 			return nil
 		}
 		return bs
@@ -321,4 +323,75 @@ func clearHeader(h http.Header) {
 	for k := range h {
 		h.Del(k)
 	}
+}
+
+func unescape(s string) ([]byte, error) {
+	var buf = new(bytes.Buffer)
+	reader := strings.NewReader(s)
+
+	for {
+		r, size, err := reader.ReadRune()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		if size > 1 {
+			return nil, fmt.Errorf("rfc2396: non-ASCII char detected")
+		}
+
+		switch r {
+		case '%':
+			eb1, err := reader.ReadByte()
+			if err == io.EOF {
+				return nil, fmt.Errorf("rfc2396: unexpected end of unescape sequence")
+			}
+			if err != nil {
+				return nil, err
+			}
+			if !isHex(eb1) {
+				return nil, fmt.Errorf("rfc2396: invalid char 0x%x in unescape sequence", r)
+			}
+			eb0, err := reader.ReadByte()
+			if err == io.EOF {
+				return nil, fmt.Errorf("rfc2396: unexpected end of unescape sequence")
+			}
+			if err != nil {
+				return nil, err
+			}
+			if !isHex(eb0) {
+				return nil, fmt.Errorf("rfc2396: invalid char 0x%x in unescape sequence", r)
+			}
+			buf.WriteByte(unhex(eb0) + unhex(eb1)*16)
+		default:
+			buf.WriteByte(byte(r))
+		}
+	}
+	return buf.Bytes(), nil
+}
+
+func isHex(c byte) bool {
+	switch {
+	case c >= 'a' && c <= 'f':
+		return true
+	case c >= 'A' && c <= 'F':
+		return true
+	case c >= '0' && c <= '9':
+		return true
+	}
+	return false
+}
+
+// borrowed from net/url/url.go
+func unhex(c byte) byte {
+	switch {
+	case '0' <= c && c <= '9':
+		return c - '0'
+	case 'a' <= c && c <= 'f':
+		return c - 'a' + 10
+	case 'A' <= c && c <= 'F':
+		return c - 'A' + 10
+	}
+	return 0
 }
