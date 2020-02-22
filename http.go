@@ -24,6 +24,7 @@ const (
 	HeaderIfNoneMatch     = "If-None-Match"
 	HeaderIfModifiedSince = "If-Modified-Since"
 	HeaderAuthorization   = "Authorization"
+	HeaderLocation        = "Location"
 )
 
 // HTTP content types
