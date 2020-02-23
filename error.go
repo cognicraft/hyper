@@ -10,19 +10,3 @@ type Error struct {
 
 // Errors .
 type Errors []Error
-
-func ErrorItem(errs ...error) Item {
-	res := Item{}
-	for _, err := range errs {
-		e := Error{Message: err.Error()}
-		if errC, ok := err.(errorCoder); ok {
-			e.Code = errC.Code()
-		}
-		res.Errors = append(res.Errors, e)
-	}
-	return res
-}
-
-type errorCoder interface {
-	Code() string
-}
