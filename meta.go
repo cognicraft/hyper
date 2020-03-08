@@ -249,7 +249,7 @@ func (m Meta) currentSort() []interface{} {
 	return scs
 }
 
-func Parse(url *url.URL) (Meta, error) {
+func ParseMeta(url *url.URL) (Meta, error) {
 	filter, err := ParseFilter(url)
 	if err != nil {
 		return Meta{}, fmt.Errorf("parse filter: %s", err)
