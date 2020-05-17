@@ -2,8 +2,42 @@ package hyper
 
 import (
 	"io/ioutil"
+	"net/http"
+	"reflect"
+	"strings"
 	"testing"
 )
+
+func TestExtractCommand(t *testing.T) {
+	body := `{"@action":"foo", "bar": 3, "data":[{"type":"bar", "data":{}},{"type":"baz", "data":{}}]}`
+	req, _ := http.NewRequest("POST", "/", strings.NewReader(body))
+	c := ExtractCommand(req)
+
+	if c.Action != "foo" {
+		t.Errorf("want: %s, got: %s", "foo", c.Action)
+	}
+	if b := c.Arguments.Int("bar"); b != 3 {
+		t.Errorf("want: %d, got: %d", 3, b)
+	}
+
+	type generic struct {
+		Type string      `json:"type"`
+		Data interface{} `json:"data"`
+	}
+
+	data := []generic{}
+	err := c.Arguments.JSON("data", &data)
+	if err != nil {
+		t.Errorf("expected no error: %v", err)
+	}
+	want := []generic{
+		{Type: "bar", Data: map[string]interface{}{}},
+		{Type: "baz", Data: map[string]interface{}{}},
+	}
+	if !reflect.DeepEqual(want, data) {
+		t.Errorf("\nwant: %#v\ngot: %#v\n", want, data)
+	}
+}
 
 func TestCommand(t *testing.T) {
 
