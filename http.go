@@ -61,7 +61,7 @@ func ExtractCommand(r *http.Request) Command {
 	c := MakeCommand()
 	ct := r.Header.Get(HeaderContentType)
 	switch {
-	case ct == ContentTypeURLEncoded:
+	case strings.HasPrefix(ct, ContentTypeURLEncoded):
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			return c
