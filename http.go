@@ -131,6 +131,18 @@ type Command struct {
 
 type Arguments map[string]interface{}
 
+func (a Arguments) JSON(key string, v interface{}) error {
+	val, ok := a[key]
+	if !ok {
+		return fmt.Errorf("key not found")
+	}
+	bs, err := json.Marshal(val)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bs, v)
+}
+
 func (a Arguments) String(key string) string {
 	v, ok := a[key]
 	if !ok {
