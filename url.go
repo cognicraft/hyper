@@ -46,16 +46,18 @@ func ExternalPath(r *http.Request) string {
 }
 
 func ExternalURL(r *http.Request) *url.URL {
-	scheme := ExternalScheme(r)
-	host := ExternalHost(r)
-	path := ExternalPath(r)
-	query := r.URL.RawQuery
-
-	exURL := fmt.Sprintf("%s://%s%s", scheme, host, path)
-	if len(query) > 0 {
-		exURL = fmt.Sprintf("%s://%s%s?%s", scheme, host, path, query)
+	schemePart := ExternalScheme(r)
+	schemePart = schemePart + "://"
+	hostPart := ExternalHost(r)
+	if hostPart == "" {
+		schemePart = ""
 	}
-
+	pathPart := ExternalPath(r)
+	queryPart := r.URL.RawQuery
+	if len(queryPart) > 0 {
+		queryPart = "?" + queryPart
+	}
+	exURL := schemePart + hostPart + pathPart + queryPart
 	result, _ := url.Parse(exURL)
 	return result
 }
