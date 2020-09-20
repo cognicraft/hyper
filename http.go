@@ -46,9 +46,13 @@ func Write(w http.ResponseWriter, status int, i Item) {
 const NameAction = "@action"
 
 func ActionParameter(value string) Parameter {
+	return HiddenParameter(NameAction, value)
+}
+
+func HiddenParameter(name string, value interface{}) Parameter {
 	return Parameter{
 		Type:  TypeHidden,
-		Name:  NameAction,
+		Name:  name,
 		Value: value,
 	}
 }
