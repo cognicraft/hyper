@@ -32,9 +32,9 @@ func (as Actions) Swap(i, j int) {
 }
 
 // Find .
-func (as Actions) Find(f func(Action) bool) (Action, bool) {
+func (as Actions) Find(accept func(Action) bool) (Action, bool) {
 	for _, a := range as {
-		if f(a) {
+		if accept(a) {
 			return a, true
 		}
 	}
@@ -47,14 +47,14 @@ func (as Actions) FindByRel(rel string) (Action, bool) {
 }
 
 // Filter .
-func (as Actions) Filter(f func(Action) bool) Actions {
-	filtered := []Action{}
+func (as Actions) Filter(accept func(Action) bool) Actions {
+	var res Actions
 	for _, a := range as {
-		if f(a) {
-			filtered = append(filtered, a)
+		if accept(a) {
+			res = append(res, a)
 		}
 	}
-	return filtered
+	return res
 }
 
 // FilterByRel .

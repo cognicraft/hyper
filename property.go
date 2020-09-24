@@ -15,14 +15,25 @@ type Property struct {
 // Properties is a collection of Property
 type Properties []Property
 
-// Find returns a Property by name
-func (ps Properties) Find(name string) (Property, bool) {
+// Find
+func (ps Properties) Find(accept func(p Property) bool) (Property, bool) {
 	for _, p := range ps {
-		if p.Name == name {
+		if accept(p) {
 			return p, true
 		}
 	}
 	return Property{}, false
+}
+
+//Filter
+func (ps Properties) Filter(accept func(Property) bool) Properties {
+	var res Properties
+	for _, p := range ps {
+		if accept(p) {
+			res = append(res, p)
+		}
+	}
+	return res
 }
 
 // KeyBy calculates a map keyed by the result of the extractKey funktion.
@@ -40,7 +51,9 @@ func (ps Properties) KeyBy(extractKey func(Property) string) map[string]Property
 
 // KeyByName returns a map of Properties keyed by name
 func (ps Properties) KeyByName() map[string]Property {
-	return ps.KeyBy(func(p Property) string {
-		return p.Name
-	})
+	return ps.KeyBy(ExtractPropertyName)
+}
+
+func ExtractPropertyName(p Property) string {
+	return p.Name
 }

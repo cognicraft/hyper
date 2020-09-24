@@ -20,9 +20,9 @@ type Link struct {
 type Links []Link
 
 // Find .
-func (ls Links) Find(f func(Link) bool) (Link, bool) {
+func (ls Links) Find(accept func(Link) bool) (Link, bool) {
 	for _, l := range ls {
-		if f(l) {
+		if accept(l) {
 			return l, true
 		}
 	}
@@ -35,14 +35,14 @@ func (ls Links) FindByRel(rel string) (Link, bool) {
 }
 
 // Filter .
-func (ls Links) Filter(f func(Link) bool) Links {
-	var filtered Links
+func (ls Links) Filter(accept func(Link) bool) Links {
+	var res Links
 	for _, l := range ls {
-		if f(l) {
-			filtered = append(filtered, l)
+		if accept(l) {
+			res = append(res, l)
 		}
 	}
-	return filtered
+	return res
 }
 
 //FilterByRel .

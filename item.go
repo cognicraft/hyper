@@ -77,9 +77,9 @@ func (i *Item) DecodeData(v interface{}) error {
 type Items []Item
 
 // Find returns an Item that satisfies the specification
-func (is Items) Find(isSatisfiedBy func(Item) bool) (Item, bool) {
+func (is Items) Find(accept func(Item) bool) (Item, bool) {
 	for _, i := range is {
-		if isSatisfiedBy(i) {
+		if accept(i) {
 			return i, true
 		}
 	}
@@ -124,14 +124,14 @@ func (is Items) KeyByRel() map[string]Item {
 }
 
 // Filter returns a collection of Items that conform to the profided specification
-func (is Items) Filter(isSatisfiedBy func(Item) bool) Items {
-	filtered := []Item{}
+func (is Items) Filter(accept func(Item) bool) Items {
+	var res Items
 	for _, i := range is {
-		if isSatisfiedBy(i) {
-			filtered = append(filtered, i)
+		if accept(i) {
+			res = append(res, i)
 		}
 	}
-	return filtered
+	return res
 }
 
 // ItemIDEquals is used to Filter a collection of Items by id

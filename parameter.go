@@ -29,22 +29,50 @@ type Parameter struct {
 // Parameters .
 type Parameters []Parameter
 
-// FindByName .
-func (as Parameters) FindByName(name string) (Parameter, bool) {
-	for _, l := range as {
-		if l.Name == name {
-			return l, true
+//Find
+func (ps Parameters) Find(accept func(p Parameter) bool) (Parameter, bool) {
+	for _, p := range ps {
+		if accept(p) {
+			return p, true
 		}
 	}
 	return Parameter{}, false
 }
 
+// FindByName .
+func (ps Parameters) FindByName(name string) (Parameter, bool) {
+	return ps.Find(ParameterNameEquals(name))
+}
+
+//Filter
+func (ps Parameters) Filter(accept func(p Parameter) bool) Parameters {
+	var res Parameters
+	for _, p := range ps {
+		if accept(p) {
+			res = append(res, p)
+		}
+	}
+	return res
+}
+
+func ParameterNameEquals(name string) func(Parameter) bool {
+	return func(p Parameter) bool {
+		return name == p.Name
+	}
+}
+
+func ParameterTypeEquals(typ string) func(Parameter) bool {
+	return func(p Parameter) bool {
+		return typ == p.Type
+	}
+}
+
 // SelectOption .
 type SelectOption struct {
-	Label       string         `json:"label,omitempty"`
-	Description string         `json:"description,omitempty"`
-	Value       interface{}    `json:"value,omitempty"`
-	Options     []SelectOption `json:"options,omitempty"`
+	Label       string        `json:"label,omitempty"`
+	Description string        `json:"description,omitempty"`
+	Value       interface{}   `json:"value,omitempty"`
+	Options     SelectOptions `json:"options,omitempty"`
 }
 
 // SelectOptions .

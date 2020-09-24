@@ -28,32 +28,13 @@ func (f Filter) IsZero() bool {
 	return len(f) == 0
 }
 
-func (f Filter) HasComponent(name string) bool {
+func (f Filter) Find(accept func(FilterComponent) bool) (FilterComponent, bool) {
 	for _, fc := range f {
-		if fc.Name == name {
-			return true
-		}
-	}
-	return false
-}
-
-func (f Filter) FindOne(name string) (FilterComponent, bool) {
-	for _, fc := range f {
-		if fc.Name == name {
+		if accept(fc) {
 			return fc, true
 		}
 	}
 	return FilterComponent{}, false
-}
-
-func (f Filter) RemoveAll(name string) Filter {
-	var out Filter
-	for _, fc := range f {
-		if fc.Name != name {
-			out = append(out, fc)
-		}
-	}
-	return out
 }
 
 func (f Filter) Filter(accept func(c FilterComponent) bool) Filter {
