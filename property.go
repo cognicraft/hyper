@@ -25,6 +25,11 @@ func (ps Properties) Find(accept func(p Property) bool) (Property, bool) {
 	return Property{}, false
 }
 
+// FindByName
+func (ps Properties) FindByName(name string) (Property, bool) {
+	return ps.Find(PropertyNameEquals(name))
+}
+
 //Filter
 func (ps Properties) Filter(accept func(Property) bool) Properties {
 	var res Properties
@@ -52,6 +57,12 @@ func (ps Properties) KeyBy(extractKey func(Property) string) map[string]Property
 // KeyByName returns a map of Properties keyed by name
 func (ps Properties) KeyByName() map[string]Property {
 	return ps.KeyBy(ExtractPropertyName)
+}
+
+func PropertyNameEquals(name string) func(Property) bool {
+	return func(p Property) bool {
+		return name == p.Name
+	}
 }
 
 func ExtractPropertyName(p Property) string {
