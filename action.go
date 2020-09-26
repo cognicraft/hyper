@@ -14,6 +14,7 @@ type Action struct {
 	Context     string     `json:"context,omitempty"`
 	OK          string     `json:"ok,omitempty"`
 	Cancel      string     `json:"cancel,omitempty"`
+	Reset       string     `json:"reset,omitempty"`
 }
 
 // Actions .
@@ -57,14 +58,20 @@ func (as Actions) Filter(accept func(Action) bool) Actions {
 	return res
 }
 
-// FilterByRel .
-func (as Actions) FilterByRel(rel string) Actions {
-	return as.Filter(ActionRelEquals(rel))
+// FilterByContext .
+func (as Actions) FilterByContext(ctx string) Actions {
+	return as.Filter(ActionContextEquals(ctx))
 }
 
 func ActionRelEquals(rel string) func(Action) bool {
 	return func(a Action) bool {
 		return rel == a.Rel
+	}
+}
+
+func ActionContextEquals(ctx string) func(Action) bool {
+	return func(a Action) bool {
+		return ctx == a.Context
 	}
 }
 
