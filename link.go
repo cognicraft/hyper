@@ -12,6 +12,7 @@ type Link struct {
 	Template       string     `json:"template,omitempty"`
 	Parameters     Parameters `json:"parameters,omitempty"`
 	Context        string     `json:"context,omitempty"`
+	Download       string     `json:"download,omitempty"`
 	Accept         string     `json:"accept,omitempty"`
 	AcceptLanguage string     `json:"accept-language,omitempty"`
 }
