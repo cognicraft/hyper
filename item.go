@@ -8,7 +8,7 @@ import (
 type Item struct {
 	Label       string          `json:"label,omitempty"`
 	Description string          `json:"description,omitempty"`
-	Render      string          `json:"render,omitempty"`
+	Render      []string        `json:"render,omitempty"`
 	Rel         string          `json:"rel,omitempty"`
 	ID          string          `json:"id,omitempty"`
 	Type        string          `json:"type,omitempty"`

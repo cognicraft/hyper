@@ -4,7 +4,7 @@ package hyper
 type Link struct {
 	Label          string     `json:"label,omitempty"`
 	Description    string     `json:"description,omitempty"`
-	Render         string     `json:"render,omitempty"`
+	Render         []string   `json:"render,omitempty"`
 	Rel            string     `json:"rel"`
 	Href           string     `json:"href,omitempty"`
 	Type           string     `json:"type,omitempty"`
